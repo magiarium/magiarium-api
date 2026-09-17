@@ -1,0 +1,11 @@
+{
+  // 保存時のフォーマット有効化
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit", // ESLint修正
+    "source.organizeImports": "explicit" // 保存時にimport整理
+  },
+  "eslint.codeActionsOnSave.mode": "all", // ESLintの修正範囲
+  "prettier.enable": true, // Prettier拡張機能有効化
+  "typescript.preferences.includePackageJsonAutoImports": "off" // 自動import候補制御
+}

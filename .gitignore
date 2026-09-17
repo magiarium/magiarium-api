@@ -1,0 +1,6 @@
+/node_modules
+
+
+// .env.template以外の.envファイルは対象外
+.env*
+!.env.template
