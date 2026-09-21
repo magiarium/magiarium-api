@@ -14,7 +14,8 @@
     "sam:validate": "sam validate",
     "sam:build": "npm run sam:validate && sam build",
     "check": "npm run node:check && npm run sam:validate",
-    "deploy": "npm run node:build && npm run sam:build && sam deploy"
+    "deploy:dev": "npm run node:build && npm run sam:build && sam deploy --config-env dev",
+    "deploy:prod": "npm run node:build && npm run sam:build && sam deploy --config-env prod"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1133.0",

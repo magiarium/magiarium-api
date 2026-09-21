@@ -1,0 +1,59 @@
+version = 0.1
+
+[default.build.parameters]
+cached = true
+
+[default.validate.parameters]
+lint = true
+
+[dev.deploy.parameters]
+capabilities = "CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+confirm_changeset = true
+resolve_s3 = true
+s3_prefix = "magiarium-api-dev"
+region = "ap-northeast-1"
+disable_rollback = false
+stack_name = "magiarium-api-dev"
+profile = "" # CHANGE ME: 使用するAWS CLI Profileを指定してください。(PowerUser + IAM更新・作成用の権限が必要です)
+parameter_overrides = [
+    "FromSystemMessageAddress=", # CHANGE ME: システム通知 送信メールアドレス
+    "ToSystemMessageAddress=", # CHANGE ME: システム通知 受信メールアドレス
+
+    "Environment=dev",
+    "MagiariumApiDomainName=dev.api.magiarium.info",
+    "MagiariumHostedZoneName=/magiarium/dev/domain/hosted-zone-name",
+    "MagiariumHostedZoneId=/magiarium/dev/domain/hosted-zone-id",
+    "MagiariumDBTableName=/magiarium/dev/database/table-name",
+    "MagiariumResourceBucketName=/magiarium/dev/storage/bucket-name",
+    "MagiariumAuthUserPoolId=/magiarium/dev/cognito/user-pool-id",
+    "MagiariumAuthUserPoolClientId=/magiarium/dev/cognito/user-pool-client-id",
+    "MagiariumClientOrigins=/magiarium/dev/config/cors",
+    "MagiariumApiUserRoleArn=/magiarium/dev/identity/api-user-role-arn",
+    "MagiariumApiAdminRoleArn=/magiarium/dev/identity/api-admin-role-arn",
+]
+
+[prod.deploy.parameters]
+capabilities = "CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+confirm_changeset = true
+resolve_s3 = true
+s3_prefix = "magiarium-api-prod"
+region = "ap-northeast-1"
+disable_rollback = false
+stack_name = "magiarium-api-prod"
+profile = "" # CHANGE ME: 使用するAWS CLI Profileを指定してください。(PowerUser + IAM更新・作成用の権限が必要です)
+parameter_overrides = [
+    "FromSystemMessageAddress=", # システム通知 送信メールアドレス
+    "ToSystemMessageAddress=", # システム通知 受信メールアドレス
+
+    "Environment=prod",
+    "MagiariumApiDomainName=api.magiarium.info",
+    "MagiariumHostedZoneName=/magiarium/prod/domain/hosted-zone-name",
+    "MagiariumHostedZoneId=/magiarium/prod/domain/hosted-zone-id",
+    "MagiariumDBTableName=/magiarium/prod/database/table-name",
+    "MagiariumResourceBucketName=/magiarium/prod/storage/bucket-name",
+    "MagiariumAuthUserPoolId=/magiarium/prod/cognito/user-pool-id",
+    "MagiariumAuthUserPoolClientId=/magiarium/prod/cognito/user-pool-client-id",
+    "MagiariumClientOrigins=/magiarium/prod/config/cors",
+    "MagiariumApiUserRoleArn=/magiarium/prod/identity/api-user-role-arn",
+    "MagiariumApiAdminRoleArn=/magiarium/prod/identity/api-admin-role-arn",
+]
