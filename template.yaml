@@ -291,7 +291,7 @@ Resources:
           Properties:
             ApiId: !Ref MagiariumApi
             Path: /sync/statistics
-            Method: PUT
+            Method: POST
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
