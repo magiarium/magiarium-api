@@ -47,6 +47,12 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Description: API用の管理者ロールArn
 
+Conditions:
+  IsProd:
+    Fn::Equals:
+      - Ref: Environment
+      - prod
+
 # 共通定義
 Globals:
   Function:
@@ -280,12 +286,6 @@ Resources:
           FROM_SYSTEM_MESSAGE_ADDRESS: !Ref FromSystemMessageAddress
           TO_SYSTEM_MESSAGE_ADDRESS: !Ref ToSystemMessageAddress
       Events:
-        ScheduleEvent:
-          Type: ScheduleV2
-          Properties:
-            Name: !Sub MagiariumSyncViewCountFunctionScheduleEvent-${Environment}
-            ScheduleExpression: cron(0 2 * * ? *)
-            ScheduleExpressionTimezone: Asia/Tokyo
         MagiariumApiEvent:
           Type: HttpApi
           Properties:
@@ -300,3 +300,17 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - src/handlers/private/sync-view-count.ts
+  # 閲覧数同期スケジューラー
+  SyncViewCountScheduler:
+    Type: AWS::Scheduler::Schedule
+    Condition: IsProd
+    Properties:
+      Name: !Sub MagiariumSyncViewCountScheduler-${Environment}
+      ScheduleExpression: cron(0 2 * * ? *)
+      ScheduleExpressionTimezone: Asia/Tokyo
+      FlexibleTimeWindow:
+        Mode: 'OFF'
+      State: ENABLED
+      Target:
+        Arn: !GetAtt SyncViewCountFunction.Arn
+        RoleArn: !Ref MagiariumApiAdminRoleArn
