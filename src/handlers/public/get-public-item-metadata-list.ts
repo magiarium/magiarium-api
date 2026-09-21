@@ -76,6 +76,25 @@ export const getPublicItemMetadataList = async (
     const query =
       event.queryStringParameters as GetItemMetadataListRequest['query'];
     if (query && 'itemIds' in query) {
+      const queryParams = Object.keys(query);
+      if (queryParams.some((key) => key !== 'itemIds')) {
+        throw new CustomError<GetItemMetadataListResult>({
+          statusCode: 400,
+          body: {
+            success: false,
+            error: {
+              message: '不正なリクエスト',
+              details: [
+                {
+                  field: 'request.params.itemIds',
+                  errorType: 'VALIDATION_ERROR',
+                  issue: `itemIdsは他のクエリパラメータと併用できません。指定されたパラメータ=[${queryParams.join(',')}].`,
+                },
+              ],
+            },
+          },
+        });
+      }
       const itemIds: ItemId[] = query.itemIds?.split(',') as ItemId[];
       if (itemIds.length === 0 || itemIds.length > 100) {
         throw new CustomError<GetItemMetadataListResult>({
