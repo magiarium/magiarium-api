@@ -1,3 +1,186 @@
 {
-  "configurations": []
+  "configurations": [
+    {
+      "type": "aws-sam",
+      "request": "direct-invoke",
+      "name": "下書きアイテムデータ保存",
+      "invokeTarget": {
+        "target": "template",
+        "templatePath": "${workspaceFolder}/template.yaml",
+        "logicalId": "SaveDraftItemDataFunction"
+      },
+      "lambda": {
+        "payload": {
+          "path": "${workspaceFolder}/events/save-draft-item-data.json"
+        },
+        "environmentVariables": {
+          "MAGIARIUM_TABLE_NAME": "magiarium_db_dev",
+          "MAGIARIUM_BUCKET_NAME": "magiarium-resource-dev",
+          "DYNAMODB_ENDPOINT": "https://dynamodb.ap-northeast-1.amazonaws.com"
+        }
+      }
+    },
+    {
+      "type": "aws-sam",
+      "request": "direct-invoke",
+      "name": "下書きアイテムデータ取得",
+      "invokeTarget": {
+        "target": "template",
+        "templatePath": "${workspaceFolder}/template.yaml",
+        "logicalId": "GetDraftItemDataFunction"
+      },
+      "lambda": {
+        "payload": {
+          "path": "${workspaceFolder}/events/get-draft-item-data.json"
+        },
+        "environmentVariables": {
+          "MAGIARIUM_TABLE_NAME": "magiarium_db_dev",
+          "MAGIARIUM_BUCKET_NAME": "magiarium-resource-dev",
+          "DYNAMODB_ENDPOINT": "https://dynamodb.ap-northeast-1.amazonaws.com"
+        }
+      }
+    },
+    {
+      "type": "aws-sam",
+      "request": "direct-invoke",
+      "name": "下書きアイテムメタデータ一覧取得",
+      "invokeTarget": {
+        "target": "template",
+        "templatePath": "${workspaceFolder}/template.yaml",
+        "logicalId": "GetDraftItemMetadataListFunction"
+      },
+      "lambda": {
+        "payload": {
+          "path": "${workspaceFolder}/events/get-draft-item-metadata-list.json"
+        },
+        "environmentVariables": {
+          "MAGIARIUM_TABLE_NAME": "magiarium_db_dev",
+          "MAGIARIUM_BUCKET_NAME": "magiarium-resource-dev",
+          "DYNAMODB_ENDPOINT": "https://dynamodb.ap-northeast-1.amazonaws.com"
+        }
+      }
+    },
+    {
+      "type": "aws-sam",
+      "request": "direct-invoke",
+      "name": "下書きアイテム公開処理",
+      "invokeTarget": {
+        "target": "template",
+        "templatePath": "${workspaceFolder}/template.yaml",
+        "logicalId": "PublishDraftItemDataFunction"
+      },
+      "lambda": {
+        "payload": {
+          "path": "${workspaceFolder}/events/publish-draft-item-data.json"
+        },
+        "environmentVariables": {
+          "MAGIARIUM_TABLE_NAME": "magiarium_db_dev",
+          "MAGIARIUM_BUCKET_NAME": "magiarium-resource-dev",
+          "DYNAMODB_ENDPOINT": "https://dynamodb.ap-northeast-1.amazonaws.com"
+        }
+      }
+    },
+    {
+      "type": "aws-sam",
+      "request": "direct-invoke",
+      "name": "閲覧数同期処理",
+      "invokeTarget": {
+        "target": "template",
+        "templatePath": "${workspaceFolder}/template.yaml",
+        "logicalId": "SyncViewCountFunction"
+      },
+      "lambda": {
+        "payload": {
+          "path": "${workspaceFolder}/events/sync-view-count.json"
+        },
+        "environmentVariables": {
+          "MAGIARIUM_TABLE_NAME": "magiarium_db_dev",
+          "MAGIARIUM_BUCKET_NAME": "magiarium-resource-dev",
+          "DYNAMODB_ENDPOINT": "https://dynamodb.ap-northeast-1.amazonaws.com",
+          "FROM_SYSTEM_MESSAGE_ADDRESS": "XXX",
+          "TO_SYSTEM_MESSAGE_ADDRESS": "XXX"
+        }
+      }
+    },
+    {
+      "type": "aws-sam",
+      "request": "direct-invoke",
+      "name": "公開メタデータ一覧取得(itemIds指定)",
+      "invokeTarget": {
+        "target": "template",
+        "templatePath": "${workspaceFolder}/template.yaml",
+        "logicalId": "GetPublicItemMetadataListFunction"
+      },
+      "lambda": {
+        "payload": {
+          "path": "${workspaceFolder}/events/get-public-item-metadata-list-by-itemids.json"
+        },
+        "environmentVariables": {
+          "MAGIARIUM_TABLE_NAME": "magiarium_db_dev",
+          "MAGIARIUM_BUCKET_NAME": "magiarium-resource-dev",
+          "DYNAMODB_ENDPOINT": "https://dynamodb.ap-northeast-1.amazonaws.com"
+        }
+      }
+    },
+    {
+      "type": "aws-sam",
+      "request": "direct-invoke",
+      "name": "公開メタデータ一覧取得(orderBy指定)",
+      "invokeTarget": {
+        "target": "template",
+        "templatePath": "${workspaceFolder}/template.yaml",
+        "logicalId": "GetPublicItemMetadataListFunction"
+      },
+      "lambda": {
+        "payload": {
+          "path": "${workspaceFolder}/events/get-public-item-metadata-list.json"
+        },
+        "environmentVariables": {
+          "MAGIARIUM_TABLE_NAME": "magiarium_db_dev",
+          "MAGIARIUM_BUCKET_NAME": "magiarium-resource-dev",
+          "DYNAMODB_ENDPOINT": "https://dynamodb.ap-northeast-1.amazonaws.com"
+        }
+      }
+    },
+    {
+      "type": "aws-sam",
+      "request": "direct-invoke",
+      "name": "公開アイテムデータ取得",
+      "invokeTarget": {
+        "target": "template",
+        "templatePath": "${workspaceFolder}/template.yaml",
+        "logicalId": "GetPublicItemDataFunction"
+      },
+      "lambda": {
+        "payload": {
+          "path": "${workspaceFolder}/events/get-public-item-data.json"
+        },
+        "environmentVariables": {
+          "MAGIARIUM_TABLE_NAME": "magiarium_db_dev",
+          "MAGIARIUM_BUCKET_NAME": "magiarium-resource-dev",
+          "DYNAMODB_ENDPOINT": "https://dynamodb.ap-northeast-1.amazonaws.com"
+        }
+      }
+    },
+    {
+      "type": "aws-sam",
+      "request": "direct-invoke",
+      "name": "下書きアイテム削除",
+      "invokeTarget": {
+        "target": "template",
+        "templatePath": "${workspaceFolder}/template.yaml",
+        "logicalId": "DeleteDraftItemDataFunction"
+      },
+      "lambda": {
+        "payload": {
+          "path": "${workspaceFolder}/events/get-public-item-data.json"
+        },
+        "environmentVariables": {
+          "MAGIARIUM_TABLE_NAME": "magiarium_db_dev",
+          "MAGIARIUM_BUCKET_NAME": "magiarium-resource-dev",
+          "DYNAMODB_ENDPOINT": "https://dynamodb.ap-northeast-1.amazonaws.com"
+        }
+      }
+    }
+  ]
 }
