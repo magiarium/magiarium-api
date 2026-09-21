@@ -46,7 +46,7 @@ export const publishItemMetadata = async ({
 }): Promise<PublishItemMetadataResponse> => {
   const transactItems = [];
   const updatedAt: DateTimeString = dayjs().format(
-    'yyyyMMddHHmmss'
+    'YYYYMMDDHHmmss'
   ) as DateTimeString;
 
   const savedMetadata = {

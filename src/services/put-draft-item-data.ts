@@ -53,7 +53,7 @@ export const putDraftItemData = async ({
 
     // 2．metadata → 下書き版のMetadataをDBに書き込み
     try {
-      const updatedAt = dayjs().format('yyyyMMddHHmmss');
+      const updatedAt = dayjs().format('YYYYMMDDHHmmss');
       const command = new PutCommand({
         TableName: MAGIARIUM_TABLE_NAME,
         Item: {
