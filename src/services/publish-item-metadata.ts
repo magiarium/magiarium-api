@@ -4,6 +4,7 @@ import {
   DateTimeString,
   ItemId,
   ItemMetadata,
+  ItemState,
   ItemType,
 } from '@magiarium/structure';
 import dayjs from 'dayjs';
@@ -56,6 +57,7 @@ export const publishItemMetadata = async ({
     publishedAt: publicItemMetadata?.publishedAt ?? updatedAt,
     // アップデート情報は更新
     updatedAt: updatedAt,
+    itemState: 'public' as ItemState,
   };
 
   const metadataEntity: PublicItemMetadataEntity<typeof itemType> = {

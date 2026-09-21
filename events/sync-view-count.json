@@ -1,0 +1,4 @@
+{
+  "httpMethod": "PUT",
+  "path": "/sync/statistics"
+}

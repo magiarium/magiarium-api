@@ -26,14 +26,14 @@ export const incrementViewCounts = async ({
     const comand = new UpdateCommand({
       TableName: MAGIARIUM_TABLE_NAME,
       Key: {
-        pk: { S: `ITEM#${itemId}` },
-        sk: { S: `STATISTICS#${itemType}` },
+        pk: `ITEM#${itemId}`,
+        sk: `STATISTICS#${itemType}`,
       },
       UpdateExpression:
         'SET viewCount = if_not_exists(viewCount, :zero) + :increment',
       ExpressionAttributeValues: {
-        ':increment': { N: '1' },
-        ':zero': { N: '0' }, // viewCountが存在しない場合の初期値
+        ':increment': 1,
+        ':zero': 0, // viewCountが存在しない場合の初期値
       },
       ReturnValues: 'UPDATED_NEW',
     });
