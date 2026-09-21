@@ -9,7 +9,7 @@ import { getS3Object } from '../libs/s3/get-s3-object';
 import { ApiResponseBase } from '../types/common';
 
 type GetItemContentResult<T extends ItemType = ItemType> = ApiResultBase<
-  ItemContent<T>
+  ItemContent<T>['content']
 >;
 type GetItemContentResponse<T extends ItemType = ItemType> = ApiResponseBase<
   GetItemContentResult<T>
@@ -51,7 +51,7 @@ export const getItemContent = async <T extends ItemType = ItemType>({
       };
     }
 
-    let itemContent: ItemContent<T>;
+    let itemContent: ItemContent<T>['content'];
     try {
       itemContent = JSON.parse(getS3ObjectResponse.body.results);
     } catch {

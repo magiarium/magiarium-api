@@ -80,7 +80,7 @@ export const getItemData = async <T extends ItemType = ItemType>({
       success: true,
       results: {
         ...itemMetadata,
-        ...itemContent,
+        content: itemContent,
       },
     },
   };
