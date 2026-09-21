@@ -1,0 +1,9 @@
+{
+  "httpMethod": "PUT",
+  "path": "/item/{itemType}/draft/{itemId}",
+  "pathParameters": {
+    "itemId": "20260303000000",
+    "itemType": "blog"
+  },
+  "body": "{\"itemId\":\"20260303000000\",\"itemType\":\"blog\",\"itemState\":\"draft\",\"title\":\"テスト用ページ\",\"description\":\"テスト用です\",\"searchKey\":{\"category\":[\"テスト\"],\"tag\":[\"テスト用\",\"ダミー\"]},\"thumbnailImage\":{\"path\":\"public/item/20260303000000/image/thumbnail_20260303000000.jpg\",\"mimecontentType\":\"image/jpeg\",\"alt\":\"サムネイル画像\",\"title\":\"テスト用ページサムネ\",\"attributes\":{\"height\":515,\"width\":515},\"uploadedAt\":\"20260303000000\"},\"ogpImage\":{\"path\":\"public/item/20260303000000/image/caption_20260303000000.webp\",\"mimecontentType\":\"image/webp\",\"alt\":\"見出し画像\",\"title\":\"テスト用ページ見出し\",\"attributes\":{\"height\":1200,\"width\":1920},\"uploadedAt\":\"20260303000000\"},\"createdAt\":\"20260303000000\",\"updatedAt\":\"20260328000000\",\"publishedAt\":\"20260307000000\",\"viewCount\":0,\"content\":{}}"
+}

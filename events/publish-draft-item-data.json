@@ -1,0 +1,8 @@
+{
+  "httpMethod": "POST",
+  "path": "/item/{itemType}/public/{itemId}",
+  "pathParameters": {
+    "itemId": "20260303000000",
+    "itemType": "blog"
+  }
+}

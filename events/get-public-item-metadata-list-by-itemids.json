@@ -1,0 +1,10 @@
+{
+  "httpMethod": "GET",
+  "path": "/item/{itemType}/public",
+  "pathParameters": {
+    "itemType": "blog"
+  },
+  "queryStringParameters": {
+    "itemIds": "20260303000000"
+  }
+}

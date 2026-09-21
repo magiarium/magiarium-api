@@ -1,0 +1,316 @@
+Transform: AWS::Serverless-2016-10-31
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  ## samconfig.tomlに直接定義するパラメータ
+  Environment:
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    Default: dev
+  MagiariumApiDomainName:
+    Type: String
+    Description: 公開API用のドメイン
+  FromSystemMessageAddress:
+    Type: String
+    Description: システム通知 送信メールアドレス
+  ToSystemMessageAddress:
+    Type: String
+    Description: システム通知 受信メールアドレス
+  ## ParameterStoreから取得するパラメータ一覧(インフラリポジトリで登録済み)
+  MagiariumHostedZoneName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: Route53のホストゾーン名
+  MagiariumHostedZoneId:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: Route53のホストゾーンID
+  MagiariumDBTableName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: DynamoDBテーブル名
+  MagiariumResourceBucketName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: S3バケット名
+  MagiariumAuthUserPoolId:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: Cognito認証で使用するユーザープールID
+  MagiariumAuthUserPoolClientId:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: Cognito認証で使用するユーザープールクライアントID
+  MagiariumClientOrigins:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: CORS対策
+  MagiariumApiUserRoleArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: API用のユーザーロールArn
+  MagiariumApiAdminRoleArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: API用の管理者ロールArn
+
+Conditions:
+  IsProd:
+    Fn::Equals:
+      - Ref: Environment
+      - prod
+
+# 共通定義
+Globals:
+  Function:
+    CodeUri: ./
+    Runtime: nodejs22.x
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        DYNAMODB_ENDPOINT: !Sub https://dynamodb.${AWS::Region}.amazonaws.com
+        MAGIARIUM_TABLE_NAME: !Ref MagiariumDBTableName
+        MAGIARIUM_BUCKET_NAME: !Ref MagiariumResourceBucketName
+
+Resources:
+  # APIドメイン名をParameterStoreに登録
+  MagiariumApiDomainNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub /magiarium/${Environment}/api/domain-name
+      Type: String
+      Value: !Ref MagiariumApiDomainName
+
+  # ACM証明書
+  MagiariumACM:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref MagiariumApiDomainName
+      ValidationMethod: DNS
+      CertificateTransparencyLoggingPreference: ENABLED
+      DomainValidationOptions:
+        - DomainName: !Ref MagiariumApiDomainName
+          HostedZoneId: !Ref MagiariumHostedZoneId
+
+  # APIGateway
+  MagiariumApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - Authorization
+        AllowOrigins: !Ref MagiariumClientOrigins
+      Domain:
+        DomainName: !Ref MagiariumApiDomainName
+        CertificateArn: !Ref MagiariumACM
+        Route53:
+          HostedZoneId: !Ref MagiariumHostedZoneId
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            JwtConfiguration:
+              issuer: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${MagiariumAuthUserPoolId}
+              audience:
+                - !Ref MagiariumAuthUserPoolClientId
+              CustomScope: 'Private'
+            IdentitySource: '$request.header.Authorization'
+        DefaultAuthorizer: CognitoAuthorizer
+
+  # 公開メタデータ一覧取得処理
+  GetPublicItemMetadataListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: get-public-item-metadata-list.getPublicItemMetadataList
+      Role: !Ref MagiariumApiUserRoleArn
+      Events:
+        MagiariumApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MagiariumApi
+            Path: /item/{itemType}/public
+            Method: GET
+            Auth:
+              Authorizer: NONE ## 公開APIは認証なし
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/public/get-public-item-metadata-list.ts
+
+  # 公開アイテム取得処理
+  GetPublicItemDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: get-public-item-data.getPublicItemData
+      Role: !Ref MagiariumApiUserRoleArn
+      Events:
+        MagiariumApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MagiariumApi
+            Path: /item/{itemType}/public/{itemId}
+            Method: GET
+            Auth:
+              Authorizer: NONE ## 公開APIは認証なし
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/public/get-public-item-data.ts
+
+  # 下書きアイテムデータ削除処理
+  DeleteDraftItemDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: delete-draft-item-data.deleteDraftItemData
+      Role: !Ref MagiariumApiAdminRoleArn
+      Events:
+        MagiariumApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MagiariumApi
+            Path: /item/{itemType}/draft/{itemId}
+            Method: DELETE
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/private/delete-draft-item-data.ts
+
+  # 下書きアイテムメタデータ一覧取得処理
+  GetDraftItemMetadataListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: get-draft-item-metadata-list.getDraftItemMetadataList
+      Role: !Ref MagiariumApiAdminRoleArn
+      Events:
+        MagiariumApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MagiariumApi
+            Path: /item/{itemType}/draft
+            Method: GET
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/private/get-draft-item-metadata-list.ts
+
+  # 下書きアイテム取得処理
+  GetDraftItemDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: get-draft-item-data.getEditItemData
+      Role: !Ref MagiariumApiAdminRoleArn
+      Events:
+        MagiariumApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MagiariumApi
+            Path: /item/{itemType}/draft/{itemId}
+            Method: GET
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/private/get-draft-item-data.ts
+
+  # 下書きアイテム保存処理
+  SaveDraftItemDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: save-draft-item-data.saveDraftItemData
+      Role: !Ref MagiariumApiAdminRoleArn
+      Events:
+        MagiariumApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MagiariumApi
+            Path: /item/{itemType}/draft/{itemId}
+            Method: PUT
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/private/save-draft-item-data.ts
+
+  # 下書きアイテム公開処理
+  PublishDraftItemDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: publish-draft-item-data.publishDraftItemData
+      Role: !Ref MagiariumApiAdminRoleArn
+      Events:
+        MagiariumApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MagiariumApi
+            Path: /item/{itemType}/public/{itemId}
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/private/publish-draft-item-data.ts
+
+  # 閲覧数同期処理
+  SyncViewCountFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: sync-view-count.syncViewCount
+      Role: !Ref MagiariumApiAdminRoleArn
+      Environment:
+        Variables:
+          FROM_SYSTEM_MESSAGE_ADDRESS: !Ref FromSystemMessageAddress
+          TO_SYSTEM_MESSAGE_ADDRESS: !Ref ToSystemMessageAddress
+      Events:
+        MagiariumApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref MagiariumApi
+            Path: /sync/statistics
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/private/sync-view-count.ts
+  # 閲覧数同期スケジューラー
+  SyncViewCountScheduler:
+    Type: AWS::Scheduler::Schedule
+    Condition: IsProd
+    Properties:
+      Name: !Sub MagiariumSyncViewCountScheduler-${Environment}
+      ScheduleExpression: cron(0 2 * * ? *)
+      ScheduleExpressionTimezone: Asia/Tokyo
+      FlexibleTimeWindow:
+        Mode: 'OFF'
+      State: ENABLED
+      Target:
+        Arn: !GetAtt SyncViewCountFunction.Arn
+        RoleArn: !Ref MagiariumApiAdminRoleArn

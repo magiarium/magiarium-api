@@ -1,0 +1,7 @@
+{
+  "httpMethod": "GET",
+  "path": "/item/{itemType}/draft",
+  "pathParameters": {
+    "itemType": "blog"
+  }
+}
