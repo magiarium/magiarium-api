@@ -39,7 +39,7 @@ export const getItemContent = async <T extends ItemType = ItemType>({
   try {
     // アイテムコンテンツ取得
     const getS3ObjectResponse = await getS3Object(
-      `items/${itemId}/${itemState}/${itemType}/content.json`
+      `items/${itemType}/${itemId}/${itemState}/content.json`
     );
     if (!getS3ObjectResponse.body.success) {
       return {

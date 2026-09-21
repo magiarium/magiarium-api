@@ -44,7 +44,7 @@ export const putDraftItemData = async ({
     // 0．viewCountは不要なので破棄(Publish時にStatisticsデータを取得→反映する)
     // 1．content → JSON化してS3アップロード
     const putS3ObjectResponse = await putS3Object({
-      path: `items/${itemId}/draft/${itemType}/content.json`,
+      path: `items/${itemType}/${itemId}/draft/content.json`,
       body: JSON.stringify(content),
     });
     if (!putS3ObjectResponse.body.success) {
