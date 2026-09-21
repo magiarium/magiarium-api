@@ -1,5 +1,7 @@
 /node_modules
+.aws-sam
 
+samconfig.toml
 
 // .env.template以外の.envファイルは対象外
 .env*

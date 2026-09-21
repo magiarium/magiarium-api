@@ -4,9 +4,19 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write .",
-    "lint:fix": "eslint . --fix",
-    "build": "npm run format && npm run lint:fix && tsc && sam build"
+    "node:prettier": "prettier .",
+    "node:prettier:fix": "prettier --write .",
+    "node:lint": "eslint .",
+    "node:lint:fix": "eslint . --fix",
+    "node:check": "npm run node:prettier && npm run node:lint",
+    "node:fix": "npm run node:prettier:fix && npm run node:lint:fix",
+    "node:build": "npm run node:check && tsc",
+    "sam:validate": "sam validate",
+    "sam:build": "npm run sam:validate && sam build",
+    "check": "npm run node:check && npm run sam:validate",
+    "start": "sam local start-api",
+    "execute": "sam local invoke",
+    "deploy": "npm run node:build && npm run sam:build && sam deploy"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1133.0",
@@ -14,7 +24,8 @@
     "@aws-sdk/client-ses": "^3.1134.0",
     "@aws-sdk/lib-dynamodb": "^3.1133.0",
     "@magiarium/structure": "github:magiarium/magiarium-structure",
-    "dayjs": "^1.11.23"
+    "dayjs": "^1.11.23",
+    "esbuild": "^0.28.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
