@@ -1,0 +1,11 @@
+{
+  "httpMethod": "GET",
+  "path": "/item/{itemType}/public",
+  "pathParameters": {
+    "itemType": "blog"
+  },
+  "queryStringParameters": {
+    "orderBy": "published_at_desc",
+    "limit": 10
+  }
+}
