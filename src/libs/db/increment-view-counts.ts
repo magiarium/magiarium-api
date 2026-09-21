@@ -47,7 +47,7 @@ export const incrementViewCounts = async ({
           : 0,
       },
     };
-  } catch (error) {
+  } catch {
     return {
       statusCode: 500,
       body: {

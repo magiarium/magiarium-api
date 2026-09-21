@@ -12,10 +12,10 @@ export const convertItemMetadataFromEntity = <T extends ItemType = ItemType>(
 ): ItemMetadata<T> => {
   if (isDraftItemMetadataEntity(itemMetadataEntity)) {
     const {
-      pk,
-      sk,
-      gsi_draft_updatedAt_pk,
-      gsi_draft_updatedAt_sk,
+      pk: _pk,
+      sk: _sk,
+      gsi_draft_updatedAt_pk: _gsi_draft_updatedAt_pk,
+      gsi_draft_updatedAt_sk: _gsi_draft_updatedAt_sk,
       ...itemMetadata
     } = itemMetadataEntity;
 
@@ -23,12 +23,12 @@ export const convertItemMetadataFromEntity = <T extends ItemType = ItemType>(
   }
 
   const {
-    pk,
-    sk,
-    gsi_itemType_publishedAt_pk,
-    gsi_itemType_publishedAt_sk,
-    gsi_itemType_viewCount_pk,
-    gsi_itemType_viewCount_sk,
+    pk: _pk,
+    sk: _sk,
+    gsi_itemType_publishedAt_pk: _gsi_itemType_publishedAt_pk,
+    gsi_itemType_publishedAt_sk: _gsi_itemType_publishedAt_sk,
+    gsi_itemType_viewCount_pk: _gsi_itemType_viewCount_pk,
+    gsi_itemType_viewCount_sk: _gsi_itemType_viewCount_sk,
     ...itemMetadata
   } = itemMetadataEntity;
 

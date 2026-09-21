@@ -11,7 +11,7 @@ type SendSystemMailResponse = ApiResponseBase<ApiResultBase<undefined>>;
  *
  * @param params.toAddresses 送信対象メールアドレスリスト
  * @param params.title タイトル
- * @param params.content　メール本文
+ * @param params.content メール本文
  * @return システムメール送信処理結果
  *
  * @remarks
@@ -54,7 +54,7 @@ export const sendSystemMail = async ({
         results: undefined,
       },
     };
-  } catch (error) {
+  } catch {
     return {
       statusCode: 500,
       body: {

@@ -59,7 +59,10 @@ export const getS3Object = async (
       },
     };
   } catch (error) {
-    if (error instanceof NoSuchKey || (error as any)?.name === 'NoSuchKey') {
+    if (
+      error instanceof NoSuchKey ||
+      (error instanceof Error && error.name === 'NoSuchKey')
+    ) {
       return {
         statusCode: 404,
         body: {

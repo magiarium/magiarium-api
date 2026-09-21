@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "node:prettier": "prettier .",
+    "node:prettier": "prettier --check .",
     "node:prettier:fix": "prettier --write .",
     "node:lint": "eslint .",
     "node:lint:fix": "eslint . --fix",
@@ -14,8 +14,6 @@
     "sam:validate": "sam validate",
     "sam:build": "npm run sam:validate && sam build",
     "check": "npm run node:check && npm run sam:validate",
-    "start": "sam local start-api",
-    "execute": "sam local invoke",
     "deploy": "npm run node:build && npm run sam:build && sam deploy"
   },
   "dependencies": {
@@ -35,6 +33,7 @@
     "eslint-config-next": "^15.1.0",
     "prettier": "^3.9.6",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0"
   }
 }

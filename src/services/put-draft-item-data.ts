@@ -68,7 +68,7 @@ export const putDraftItemData = async ({
         } as DraftItemMetadataEntity,
       });
       await dynamoDBDocumentClient.send(command);
-    } catch (error) {
+    } catch {
       throw new CustomError<PutDraftItemDataResult>({
         statusCode: 500,
         body: {
