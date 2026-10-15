@@ -1,6 +1,6 @@
 import {
-  GetItemDataRequest,
-  GetItemDataResult,
+  GetPublicItemDataRequest,
+  GetPublicItemDataResult,
   ITEM_ID_PATTERN,
   ITEM_TYPE,
 } from '@magiarium/structure';
@@ -11,7 +11,7 @@ import { incrementViewCounts } from '../../libs/db/increment-view-counts';
 import { getItemData } from '../../services/get-item-data';
 import type { ApiResponseBase } from '../../types/common';
 
-type GetPublicItemDataResponse = ApiResponseBase<GetItemDataResult>;
+type GetPublicItemDataResponse = ApiResponseBase<GetPublicItemDataResult>;
 
 /**
  * 公開済みアイテム取得処理
@@ -33,7 +33,7 @@ export const getPublicItemData = async (
   try {
     // 1.パラメータチェック
     if (event.pathParameters === undefined) {
-      throw new CustomError<GetItemDataResult>({
+      throw new CustomError<GetPublicItemDataResult>({
         statusCode: 500,
         body: {
           success: false,
@@ -50,10 +50,10 @@ export const getPublicItemData = async (
         },
       });
     }
-    const params = event.pathParameters as GetItemDataRequest['params'];
+    const params = event.pathParameters as GetPublicItemDataRequest['params'];
     const itemId = params.itemId;
     if (itemId === undefined || !ITEM_ID_PATTERN.test(itemId)) {
-      throw new CustomError<GetItemDataResult>({
+      throw new CustomError<GetPublicItemDataResult>({
         statusCode: 400,
         body: {
           success: false,
@@ -72,7 +72,7 @@ export const getPublicItemData = async (
     }
     const itemType = params.itemType;
     if (!ITEM_TYPE.includes(itemType)) {
-      throw new CustomError<GetItemDataResult>({
+      throw new CustomError<GetPublicItemDataResult>({
         statusCode: 400,
         body: {
           success: false,
@@ -96,7 +96,7 @@ export const getPublicItemData = async (
       itemId: itemId,
     });
     if (!getItemDataResponse.body.success) {
-      throw new CustomError<GetItemDataResult>(getItemDataResponse);
+      throw new CustomError<GetPublicItemDataResult>(getItemDataResponse);
     }
     // 3.ビューカウント更新(失敗しても無害なので結果チェックは割愛)
     await incrementViewCounts({
@@ -122,5 +122,5 @@ export const getPublicItemData = async (
   }
 
   // 4.レスポンス作成
-  return convertLambdaResponse<GetItemDataResult>()(response);
+  return convertLambdaResponse<GetPublicItemDataResult>()(response);
 };

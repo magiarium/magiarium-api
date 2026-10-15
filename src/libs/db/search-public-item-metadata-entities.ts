@@ -115,7 +115,7 @@ export const searchPublicItemMetadataEntities = async <
             details: [
               {
                 field: 'searchPublicItemMetadataEntities',
-                errorType: 'BUSINESS_ERROR',
+                errorType: 'NOT_FOUND',
                 issue: `対象アイテムが見つかりません。itemType=[${itemType}], lastEvaluatedKey=[${lastEvaluatedKey}]`,
               },
             ],

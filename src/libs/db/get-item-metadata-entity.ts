@@ -70,7 +70,7 @@ export const getItemMetadataEntity = async <
             details: [
               {
                 field: 'getItemMetadataEntity',
-                errorType: 'BUSINESS_ERROR',
+                errorType: 'NOT_FOUND',
                 issue: `対象アイテムが見つかりません。itemType=[${itemType}], itemState=[${itemState}], itemId=[${itemId}].`,
               },
             ],

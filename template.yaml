@@ -100,7 +100,7 @@ Resources:
         AllowHeaders:
           - Content-Type
           - Authorization
-        AllowOrigins: !Ref MagiariumClientOrigins
+        AllowOrigins: !Split [',', !Ref MagiariumClientOrigins]
       Domain:
         DomainName: !Ref MagiariumApiDomainName
         CertificateArn: !Ref MagiariumACM
