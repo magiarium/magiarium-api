@@ -1,6 +1,6 @@
 import {
-  GetItemMetadataListRequest,
-  GetItemMetadataListResult,
+  GetPublicItemMetadataListRequest,
+  GetPublicItemMetadataListResult,
   ITEM_TYPE,
   ItemId,
 } from '@magiarium/structure';
@@ -13,7 +13,7 @@ import { searchPublicItemMetadataEntities } from '../../libs/db/search-public-it
 import { ApiResponseBase } from '../../types/common';
 
 type GetPublicItemMetadataListResponse =
-  ApiResponseBase<GetItemMetadataListResult>;
+  ApiResponseBase<GetPublicItemMetadataListResult>;
 
 /**
  * 公開済みアイテムメタデータ一覧取得処理
@@ -34,7 +34,7 @@ export const getPublicItemMetadataList = async (
   try {
     // 1.パラメータチェック
     if (event.pathParameters === undefined) {
-      throw new CustomError<GetItemMetadataListResult>({
+      throw new CustomError<GetPublicItemMetadataListResult>({
         statusCode: 500,
         body: {
           success: false,
@@ -51,10 +51,11 @@ export const getPublicItemMetadataList = async (
         },
       });
     }
-    const params = event.pathParameters as GetItemMetadataListRequest['params'];
+    const params =
+      event.pathParameters as GetPublicItemMetadataListRequest['params'];
     const itemType = params?.itemType;
     if (!ITEM_TYPE.includes(itemType)) {
-      throw new CustomError<GetItemMetadataListResult>({
+      throw new CustomError<GetPublicItemMetadataListResult>({
         statusCode: 400,
         body: {
           success: false,
@@ -74,11 +75,11 @@ export const getPublicItemMetadataList = async (
 
     let results;
     const query =
-      event.queryStringParameters as GetItemMetadataListRequest['query'];
+      event.queryStringParameters as GetPublicItemMetadataListRequest['query'];
     if (query && 'itemIds' in query) {
       const queryParams = Object.keys(query);
       if (queryParams.some((key) => key !== 'itemIds')) {
-        throw new CustomError<GetItemMetadataListResult>({
+        throw new CustomError<GetPublicItemMetadataListResult>({
           statusCode: 400,
           body: {
             success: false,
@@ -97,7 +98,7 @@ export const getPublicItemMetadataList = async (
       }
       const itemIds: ItemId[] = query.itemIds?.split(',') as ItemId[];
       if (itemIds.length === 0 || itemIds.length > 100) {
-        throw new CustomError<GetItemMetadataListResult>({
+        throw new CustomError<GetPublicItemMetadataListResult>({
           statusCode: 400,
           body: {
             success: false,
@@ -121,7 +122,7 @@ export const getPublicItemMetadataList = async (
         itemType,
       });
       if (!getItemMetadataEntitiesResponse.body.success) {
-        throw new CustomError<GetItemMetadataListResult>(
+        throw new CustomError<GetPublicItemMetadataListResult>(
           getItemMetadataEntitiesResponse
         );
       }
@@ -139,7 +140,7 @@ export const getPublicItemMetadataList = async (
           lastEvaluatedKey: query?.lastEvaluatedKey,
         });
       if (!searchItemMetadataEntitiesResponse.body.success) {
-        throw new CustomError<GetItemMetadataListResult>(
+        throw new CustomError<GetPublicItemMetadataListResult>(
           searchItemMetadataEntitiesResponse
         );
       }
@@ -172,5 +173,5 @@ export const getPublicItemMetadataList = async (
     }
   }
 
-  return convertLambdaResponse<GetItemMetadataListResult>()(result);
+  return convertLambdaResponse<GetPublicItemMetadataListResult>()(result);
 };
